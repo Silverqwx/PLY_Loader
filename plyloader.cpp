@@ -39,9 +39,10 @@ struct data
 {
 	float _x, _y, _z;
     float _nx, _ny, _nz;
+	int _flag;
     unsigned char _r, _g, _b, _a;
 	data(){
-		 _x= _y=_z=_nx=_ny=_nz=_r=_g=_b=_a=0;
+		 _x= _y=_z=_nx=_ny=_nz= _flag=_r=_g=_b=_a=0;
 	}
 };
 
@@ -96,13 +97,14 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 	long nvertices;
 	int position;
 	struct faceData F;
+	unsigned char fcFlag;
 	isMesh=0;
 
     string line;
     string s1, s2;
 
     ifstream inputPly;
-	inputPly.open(filename,ios::binary);
+	inputPly.open(filename);
 
 	if (!inputPly.is_open()) {
         cerr << "Couldn't open " << filename << '\n';
@@ -159,20 +161,49 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 			exit(0);
 		}
 
-		inputPly.read((char *)&Values,sizeof(Values));
+
+		//inputPly.read((char *)&Values,sizeof(Values));
 
 		//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< Values._r <<"\t"<< Values._g <<"\t"<< Values._b <<"\t"<< Values._a;
-		min = max = Eigen::Vector3d(Values._x, Values._y, Values._z);
 
-		positions.push_back(Eigen::Vector3d(Values._x, Values._y, Values._z));
-		normals.push_back(Eigen::Vector3d(Values._nx, Values._ny, Values._nz));
-		colors.push_back(Eigen::Vector3d(Values._r, Values._g, Values._b) / 255.0f);
+		//positions.push_back(Eigen::Vector3d(Values._x, Values._y, Values._z));
+		//normals.push_back(Eigen::Vector3d(Values._nx, Values._ny, Values._nz));
+		//colors.push_back(Eigen::Vector3d(Values._r, Values._g, Values._b) / 255.0f);
 
-		for (long int i = 1; i < vertexCount; i++) 
+		for (long int i = 0; i < vertexCount; i++) 
 		{
-			inputPly.read((char *)&Values,sizeof(Values));
+			//inputPly.read((char *)&Values,sizeof(Values));
 			//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< (int)Values._r <<"\t"<< (int)Values._g <<"\t"<< (int)Values._b <<"\t"<< (int)Values._a;
-        
+
+			getline(inputPly, line, ' ');
+			Values._x = std::stof(line);
+			getline(inputPly, line, ' ');
+			Values._y = std::stof(line);
+			getline(inputPly, line, ' ');
+			Values._z = std::stof(line);
+			getline(inputPly, line, ' ');
+			Values._nx = std::stof(line);
+			getline(inputPly, line, ' ');
+			Values._ny = std::stof(line);
+			getline(inputPly, line, ' ');
+			Values._nz = std::stof(line);
+			getline(inputPly, line, ' ');
+			Values._flag = std::stoi(line);
+			getline(inputPly, line, ' ');
+			Values._r = std::stoi(line);
+			getline(inputPly, line, ' ');
+			Values._g = std::stoi(line);
+			getline(inputPly, line, ' ');
+			Values._b = std::stoi(line);
+			getline(inputPly, line, ' ');
+			Values._a = std::stoi(line);
+
+			if(i==0)
+			{
+				min = Eigen::Vector3d(Values._x, Values._y, Values._z);
+				max = Eigen::Vector3d(Values._x, Values._y, Values._z);
+			}
+
 			if (Values._x < min.x()) min.x() = Values._x;
 			if (Values._y < min.y()) min.y() = Values._y;
 			if (Values._z < min.z()) min.z() = Values._z;
@@ -183,7 +214,7 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 
 			positions.push_back(Eigen::Vector3d(Values._x, Values._y, Values._z));	// -1 is been multiplied to set the correct orientation of this model....
 			normals.push_back(Eigen::Vector3d(Values._nx, Values._ny, Values._nz));
-			colors.push_back(Eigen::Vector3d((int)Values._r, (int)Values._g, (int)Values._b) / 255.0f);
+			colors.push_back(Eigen::Vector3d((int)Values._r, (int)Values._g, (int)Values._b));
 		}
 		center = (min + max) / 2.0f;
 
@@ -322,9 +353,21 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 		unsigned char numEdges;
 		for(int i=0;i<faceCount;i++)
 		{
-			inputPly.read((char *)&numEdges,sizeof(numEdges));
-			inputPly.read((char *)&F,sizeof(F));
+			/*inputPly.read((char *)&numEdges,sizeof(numEdges));
+			inputPly.read((char *)&F,sizeof(F));*/
+
+			getline(inputPly, line, ' ');
+			getline(inputPly, line, ' ');
+			F.a = std::stoi(line);
+			getline(inputPly, line, ' ');
+			F.b = std::stoi(line);
+			getline(inputPly, line, ' ');
+			F.c = std::stoi(line);
+			getline(inputPly, line, ' ');
+			fcFlag = std::stoi(line);
+			
 			faces.push_back(Eigen::Vector3i(F.a,F.b,F.c));
+			fcFlags.push_back(fcFlag);
 		}
 	}
     inputPly.close();

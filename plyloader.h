@@ -35,6 +35,7 @@ struct PLYModel {
     std::vector<Eigen::Vector3d> normals;
     std::vector<Eigen::Vector3d> colors;
 	std::vector<Eigen::Vector3i> faces;
+	std::vector<unsigned char> fcFlags;
 	/*Eigen::Vector3d *positions;
 	Eigen::Vector3d *normals;
 	Eigen::Vector3d *colors;*/
