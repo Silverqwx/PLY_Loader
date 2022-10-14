@@ -213,3 +213,7 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+Tools_ioPLY.vcxproj
+
+Tools_ioPLY.vcxproj.filters
