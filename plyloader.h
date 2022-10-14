@@ -27,17 +27,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef PLYLOADER_H
 #define	PLYLOADER_H
 
-#include <glm/glm.hpp>
+#include <Eigen/Core>
 #include <vector>
 
 struct PLYModel {
-    std::vector<glm::vec3> positions;
-    std::vector<glm::vec3> normals;
-    std::vector<glm::vec3> colors;
-	std::vector<glm::ivec3> faces;
-	/*glm::vec3 *positions;
-	glm::vec3 *normals;
-	glm::vec3 *colors;*/
+    std::vector<Eigen::Vector3d> positions;
+    std::vector<Eigen::Vector3d> normals;
+    std::vector<Eigen::Vector3d> colors;
+	std::vector<Eigen::Vector3i> faces;
+	/*Eigen::Vector3d *positions;
+	Eigen::Vector3d *normals;
+	Eigen::Vector3d *colors;*/
 
     int vertexCount; //number of vertices
     float bvWidth, bvHeight, bvDepth; //bounding volume dimensions
@@ -46,26 +46,12 @@ struct PLYModel {
 	bool isMesh; // To tell if this is a mesh or not
 	bool ifColor,ifNormal;
 
-    glm::vec3 min, max, center;
+    Eigen::Vector3d min, max, center;
 
     PLYModel();
-    PLYModel(const char *filename, bool =1,bool =1); //To indicate if normal, color informations are present in the file respectively
-	void PLYWrite(const char *filename, bool =1,bool =1);// To indicate if normal, color informations are to be written in the file respectively
+    PLYModel(const char *filename, bool isNormal = 1,bool isColor = 1); //To indicate if normal, color informations are present in the file respectively
+	void PLYWrite(const char *filename, bool isNormal = 1,bool isColor = 1);// To indicate if normal, color informations are to be written in the file respectively
 	void FreeMemory();
-};
-
-struct Material {
-    glm::vec4 Ka;
-    glm::vec4 Kd;
-    glm::vec4 Ks;
-    float shininess;
-};
-
-struct Light {
-    glm::vec4 La;
-    glm::vec4 Ld;
-    glm::vec4 Ls;
-    glm::vec4 position;
 };
 
 #endif	/* PLYLOADER_H */

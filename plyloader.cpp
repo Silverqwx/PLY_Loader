@@ -31,7 +31,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "plyloader.h"
 
 using namespace std;
-using namespace glm;
 
 PLYModel::PLYModel() {
 }
@@ -163,35 +162,35 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 		inputPly.read((char *)&Values,sizeof(Values));
 
 		//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< Values._r <<"\t"<< Values._g <<"\t"<< Values._b <<"\t"<< Values._a;
-		min = max = vec3(Values._x, Values._y, Values._z);
+		min = max = Eigen::Vector3d(Values._x, Values._y, Values._z);
 
-		positions.push_back(vec3(Values._x, Values._y, Values._z));
-		normals.push_back(vec3(Values._nx, Values._ny, Values._nz));
-		colors.push_back(vec3(Values._r, Values._g, Values._b) / 255.0f);
+		positions.push_back(Eigen::Vector3d(Values._x, Values._y, Values._z));
+		normals.push_back(Eigen::Vector3d(Values._nx, Values._ny, Values._nz));
+		colors.push_back(Eigen::Vector3d(Values._r, Values._g, Values._b) / 255.0f);
 
 		for (long int i = 1; i < vertexCount; i++) 
 		{
 			inputPly.read((char *)&Values,sizeof(Values));
 			//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< (int)Values._r <<"\t"<< (int)Values._g <<"\t"<< (int)Values._b <<"\t"<< (int)Values._a;
         
-			if (Values._x < min.x) min.x = Values._x;
-			if (Values._y < min.y) min.y = Values._y;
-			if (Values._z < min.z) min.z = Values._z;
+			if (Values._x < min.x()) min.x() = Values._x;
+			if (Values._y < min.y()) min.y() = Values._y;
+			if (Values._z < min.z()) min.z() = Values._z;
 
-			if (Values._x > max.x) max.x = Values._x;
-			if (Values._y > max.y) max.y = Values._y;
-			if (Values._z > max.z) max.z = Values._z;
+			if (Values._x > max.x()) max.x() = Values._x;
+			if (Values._y > max.y()) max.y() = Values._y;
+			if (Values._z > max.z()) max.z() = Values._z;
 
-			positions.push_back(vec3(Values._x, Values._y, Values._z));	// -1 is been multiplied to set the correct orientation of this model....
-			normals.push_back(vec3(Values._nx, Values._ny, Values._nz));
-			colors.push_back(vec3((int)Values._r, (int)Values._g, (int)Values._b) / 255.0f);
+			positions.push_back(Eigen::Vector3d(Values._x, Values._y, Values._z));	// -1 is been multiplied to set the correct orientation of this model....
+			normals.push_back(Eigen::Vector3d(Values._nx, Values._ny, Values._nz));
+			colors.push_back(Eigen::Vector3d((int)Values._r, (int)Values._g, (int)Values._b) / 255.0f);
 		}
 		center = (min + max) / 2.0f;
 
 		//Bounding volume measurements
-		bvWidth = max.x - min.x;
-		bvHeight = max.y - min.y;
-		bvDepth = max.z - min.z;
+		bvWidth = max.x() - min.x();
+		bvHeight = max.y() - min.y();
+		bvDepth = max.z() - min.z();
 		bvAspectRatio = bvWidth / bvHeight;
 	}
 
@@ -207,33 +206,33 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 		
 		inputPly.read((char *)&Value,sizeof(Value));
 		//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< Values._r <<"\t"<< Values._g <<"\t"<< Values._b <<"\t"<< Values._a;
-		min = max = vec3(Value._x, Value._y, Value._z);
+		min = max = Eigen::Vector3d(Value._x, Value._y, Value._z);
 
-		positions.push_back(vec3(Value._x, Value._y, Value._z));
-		colors.push_back(vec3(Value._r, Value._g, Value._b) / 255.0f);
+		positions.push_back(Eigen::Vector3d(Value._x, Value._y, Value._z));
+		colors.push_back(Eigen::Vector3d(Value._r, Value._g, Value._b) / 255.0f);
 
 		for (long int i = 1; i < vertexCount; i++) 
 		{
 			inputPly.read((char *)&Value,sizeof(Value));
 			//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< (int)Values._r <<"\t"<< (int)Values._g <<"\t"<< (int)Values._b <<"\t"<< (int)Values._a;
         
-			if (Value._x < min.x) min.x = Value._x;
-			if (Value._y < min.y) min.y = Value._y;
-			if (Value._z < min.z) min.z = Value._z;
+			if (Value._x < min.x()) min.x() = Value._x;
+			if (Value._y < min.y()) min.y() = Value._y;
+			if (Value._z < min.z()) min.z() = Value._z;
 
-			if (Value._x > max.x) max.x = Value._x;
-			if (Value._y > max.y) max.y = Value._y;
-			if (Value._z > max.z) max.z = Value._z;
+			if (Value._x > max.x()) max.x() = Value._x;
+			if (Value._y > max.y()) max.y() = Value._y;
+			if (Value._z > max.z()) max.z() = Value._z;
 
-			positions.push_back(vec3(Value._x, Value._y, Value._z));	// -1 is been multiplied to set the correct orientation of this model....
-			colors.push_back(vec3((int)Value._r, (int)Value._g, (int)Value._b) / 255.0f);
+			positions.push_back(Eigen::Vector3d(Value._x, Value._y, Value._z));	// -1 is been multiplied to set the correct orientation of this model....
+			colors.push_back(Eigen::Vector3d((int)Value._r, (int)Value._g, (int)Value._b) / 255.0f);
 		}
 		center = (min + max) / 2.0f;
 
 		//Bounding volume measurements
-		bvWidth = max.x - min.x;
-		bvHeight = max.y - min.y;
-		bvDepth = max.z - min.z;
+		bvWidth = max.x() - min.x();
+		bvHeight = max.y() - min.y();
+		bvDepth = max.z() - min.z();
 		bvAspectRatio = bvWidth / bvHeight;
 
 	}
@@ -249,33 +248,33 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 		}
 		inputPly.read((char *)&Value,sizeof(Value));
 		//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< Values._r <<"\t"<< Values._g <<"\t"<< Values._b <<"\t"<< Values._a;
-		min = max = vec3(Value._x, Value._y, Value._z);
+		min = max = Eigen::Vector3d(Value._x, Value._y, Value._z);
 
-		positions.push_back(vec3(Value._x, Value._y, Value._z));
-		normals.push_back(vec3(Value._nx, Value._ny, Value._nz));
+		positions.push_back(Eigen::Vector3d(Value._x, Value._y, Value._z));
+		normals.push_back(Eigen::Vector3d(Value._nx, Value._ny, Value._nz));
 
 		for (long int i = 1; i < vertexCount; i++) 
 		{
 			inputPly.read((char *)&Value,sizeof(Value));
 			//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< (int)Values._r <<"\t"<< (int)Values._g <<"\t"<< (int)Values._b <<"\t"<< (int)Values._a;
         
-			if (Value._x < min.x) min.x = Value._x;
-			if (Value._y < min.y) min.y = Value._y;
-			if (Value._z < min.z) min.z = Value._z;
+			if (Value._x < min.x()) min.x() = Value._x;
+			if (Value._y < min.y()) min.y() = Value._y;
+			if (Value._z < min.z()) min.z() = Value._z;
 
-			if (Value._x > max.x) max.x = Value._x;
-			if (Value._y > max.y) max.y = Value._y;
-			if (Value._z > max.z) max.z = Value._z;
+			if (Value._x > max.x()) max.x() = Value._x;
+			if (Value._y > max.y()) max.y() = Value._y;
+			if (Value._z > max.z()) max.z() = Value._z;
 
-			positions.push_back(vec3(Value._x, Value._y, Value._z));	// -1 is been multiplied to set the correct orientation of this model....
-			normals.push_back(vec3(Value._nx, Value._ny, Value._nz));
+			positions.push_back(Eigen::Vector3d(Value._x, Value._y, Value._z));	// -1 is been multiplied to set the correct orientation of this model....
+			normals.push_back(Eigen::Vector3d(Value._nx, Value._ny, Value._nz));
 		}
 		center = (min + max) / 2.0f;
 
 		//Bounding volume measurements
-		bvWidth = max.x - min.x;
-		bvHeight = max.y - min.y;
-		bvDepth = max.z - min.z;
+		bvWidth = max.x() - min.x();
+		bvHeight = max.y() - min.y();
+		bvDepth = max.z() - min.z();
 		bvAspectRatio = bvWidth / bvHeight;
 
 	}
@@ -287,31 +286,31 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 		
 		inputPly.read((char *)&Value,sizeof(Value));
 		//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< Values._r <<"\t"<< Values._g <<"\t"<< Values._b <<"\t"<< Values._a;
-		min = max = vec3(Value._x, Value._y, Value._z);
+		min = max = Eigen::Vector3d(Value._x, Value._y, Value._z);
 
-		positions.push_back(vec3(Value._x, Value._y, Value._z));
+		positions.push_back(Eigen::Vector3d(Value._x, Value._y, Value._z));
 		
 		for (long int i = 1; i < vertexCount; i++) 
 		{
 			inputPly.read((char *)&Value,sizeof(Value));
 			//cout<<"\n"<<Values._x <<"\t"<< Values._y <<"\t"<< Values._z <<"\t"<< Values._nx <<"\t"<< Values._ny <<"\t"<< Values._nz <<"\t"<< (int)Values._r <<"\t"<< (int)Values._g <<"\t"<< (int)Values._b <<"\t"<< (int)Values._a;
         
-			if (Value._x < min.x) min.x = Value._x;
-			if (Value._y < min.y) min.y = Value._y;
-			if (Value._z < min.z) min.z = Value._z;
+			if (Value._x < min.x()) min.x() = Value._x;
+			if (Value._y < min.y()) min.y() = Value._y;
+			if (Value._z < min.z()) min.z() = Value._z;
 
-			if (Value._x > max.x) max.x = Value._x;
-			if (Value._y > max.y) max.y = Value._y;
-			if (Value._z > max.z) max.z = Value._z;
+			if (Value._x > max.x()) max.x() = Value._x;
+			if (Value._y > max.y()) max.y() = Value._y;
+			if (Value._z > max.z()) max.z() = Value._z;
 
-			positions.push_back(vec3(Value._x, Value._y, Value._z));	// -1 is been multiplied to set the correct orientation of this model....
+			positions.push_back(Eigen::Vector3d(Value._x, Value._y, Value._z));	// -1 is been multiplied to set the correct orientation of this model....
 		}
 		center = (min + max) / 2.0f;
 
 		//Bounding volume measurements
-		bvWidth = max.x - min.x;
-		bvHeight = max.y - min.y;
-		bvDepth = max.z - min.z;
+		bvWidth = max.x() - min.x();
+		bvHeight = max.y() - min.y();
+		bvDepth = max.z() - min.z();
 		bvAspectRatio = bvWidth / bvHeight;
 
 	}
@@ -325,7 +324,7 @@ PLYModel::PLYModel(const char* filename, bool isNormal, bool isColor) {
 		{
 			inputPly.read((char *)&numEdges,sizeof(numEdges));
 			inputPly.read((char *)&F,sizeof(F));
-			faces.push_back(ivec3(F.a,F.b,F.c));
+			faces.push_back(Eigen::Vector3i(F.a,F.b,F.c));
 		}
 	}
     inputPly.close();
@@ -355,15 +354,15 @@ void PLYModel :: PLYWrite(const char* filename, bool isNormal, bool isColor)
 		//write vertices and normals
 		for(long int i = 0; i < vertexCount ; i++) 
 		{
-			fwrite(&positions[i],sizeof(glm::vec3),1,outputPly);
-			fwrite(&normals[i],sizeof(glm::vec3),1,outputPly);
+			fwrite(&positions[i],sizeof(Eigen::Vector3d),1,outputPly);
+			fwrite(&normals[i],sizeof(Eigen::Vector3d),1,outputPly);
 		}
 		// write faces
 		unsigned char sides=3;
 		for(int i=0;i<faceCount;i++)
 		{
 			fwrite(&sides,sizeof(unsigned char),1,outputPly);
-			fwrite(&faces[i],sizeof(glm::ivec3),1,outputPly);
+			fwrite(&faces[i],sizeof(Eigen::Vector3d),1,outputPly);
 		}
 		fclose(outputPly);
 	}
@@ -396,11 +395,11 @@ void PLYModel :: PLYWrite(const char* filename, bool isNormal, bool isColor)
 		for(long int i = 0; i < vertexCount ; i++) 
 		{
 			C.a=255;
-			C.r=colors[i].r*255;
-			C.g=colors[i].g*255;
-			C.b=colors[i].b*255;
-			fwrite(&positions[i],sizeof(glm::vec3),1,outputPly);
-			fwrite(&normals[i],sizeof(glm::vec3),1,outputPly);
+			C.r=colors[i].x()*255;
+			C.g=colors[i].y()*255;
+			C.b=colors[i].z()*255;
+			fwrite(&positions[i],sizeof(Eigen::Vector3d),1,outputPly);
+			fwrite(&normals[i],sizeof(Eigen::Vector3d),1,outputPly);
 			fwrite(&C,sizeof(struct colorData),1,outputPly);
 		}
 		// write faces
@@ -408,7 +407,7 @@ void PLYModel :: PLYWrite(const char* filename, bool isNormal, bool isColor)
 		for(int i=0;i<faceCount;i++)
 		{
 			fwrite(&sides,sizeof(unsigned char),1,outputPly);
-			fwrite(&faces[i],sizeof(glm::ivec3),1,outputPly);
+			fwrite(&faces[i],sizeof(Eigen::Vector3i),1,outputPly);
 		}
 		fclose(outputPly);
 	}
